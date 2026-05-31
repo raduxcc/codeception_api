@@ -1,0 +1,21 @@
+namespace: Tests
+
+support_namespace: Support
+
+paths:
+    tests: tests
+    output: test_reports
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/Envs
+
+settings:
+    colors: true
+#    formats: # forcing test report at every run
+#        html: true
+
+actor_suffix: Tester
+
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed

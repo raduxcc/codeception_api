@@ -1,0 +1,15 @@
+actor: ApiTester
+modules:
+  enabled:
+    - REST
+    - Asserts
+  config:
+    REST:
+      url: https://capslock.free.beeceptor.com/
+      depends: PhpBrowser
+      part: Json
+    PhpBrowser:
+      url: https://fakestoreapi.com/
+      headers:
+        Accept: application/json
+        Content-Type: application/json

@@ -1,0 +1,6 @@
+modules:
+  config:
+    REST:
+      url: 'https://capslock.free.beeceptor.com/'
+    PhpBrowser:
+      url: 'https://capslock.free.beeceptor.com/'

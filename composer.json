@@ -1,0 +1,29 @@
+{
+    "name": "codeception/fakestore-api-tests",
+    "description": "Codeception API tests for Fake Store API",
+    "type": "project",
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "codeception/codeception": "^5.0",
+        "codeception/module-asserts": "^3.3",
+        "codeception/module-phpbrowser": "^3.0",
+        "codeception/module-rest": "^3.0",
+        "fakerphp/faker": "^1.24"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "codeception/c3": true
+        }
+    },
+    "scripts": {
+        "test:steps": "codecept run Api --steps --html report.html --xml report.xml",
+        "test": "codecept run Api --html",
+        "test:prod": "codecept run Api --env=prod --html",
+        "test:dev": "codecept run Api --env=dev --html",
+        "test:smoke": "codecept run Api --group=smoke --html",
+        "test:local": "codecept run Api --group=local --html"
+    }
+}

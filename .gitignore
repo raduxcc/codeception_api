@@ -1,0 +1,7 @@
+/vendor/
+/test_reports/
+/.env
+composer.phar
+composer-setup.php
+.idea
+README.md

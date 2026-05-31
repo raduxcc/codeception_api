@@ -1,0 +1,6 @@
+modules:
+  config:
+    REST:
+      url: 'https://api.mockfly.dev/mocks/77ca0315-e2a0-45f2-8268-e759c5429e28'
+    PhpBrowser:
+      url: 'https://api.mockfly.dev/mocks/77ca0315-e2a0-45f2-8268-e759c5429e28'
