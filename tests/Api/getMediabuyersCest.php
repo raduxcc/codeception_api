@@ -13,43 +13,42 @@ class getMediabuyersCest
     private const lightDataEndpoint = '/api/mediabuyers';
     private const extendedDataEndpoint = '/api/mediabuyers/extended';
 
-    // Code here will be executed before each test function.
     public function _before(ApiTester $I): void
     {
         $I->sendGet(self::extendedDataEndpoint);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
+        $I->seeHttpHeader('Content-Type', 'application/json');
+
+        $rawResponse = $I->grabResponse();
+        $prettyJson = json_encode(json_decode($rawResponse), JSON_PRETTY_PRINT);
+        // inject it into the HTML report steps
+        $I->comment("--- API RESPONSE BODY ---\n\n" . $prettyJson);
     }
 
-    #[Group('local')]
-    public function getFullListOfMediaBuyers(ApiTester $I): void
+    #[Group('get', 'positive', 'sanity')]
+    public function getRequestHappyPathForListOfMediaBuyers(ApiTester $I): void
     {
         $I->seeResponseIsValidOnJsonSchemaString(json_encode(Schemas::GET_RESPONSE));
     }
 
-    #[Group('local')]
-    public function dataFieldIsAlwaysAnArray(ApiTester $I): void
+    #[Group('get', 'sanity')]
+    public function validateDataFieldIsAlwaysAnArray(ApiTester $I): void
     {
         $response = json_decode($I->grabResponse(), true);
-//        fwrite(STDOUT, "\n>>> response: " . json_encode($response) . "\n");
-//        fwrite(STDOUT, "\n>>> data: " . json_encode($response['data']) . "\n");
         $I->assertIsArray(
             $response['data'],
-//            'Failed validation: \'data\' should be an array'
+            'Failed validation: \'data\' should be an array'
         );
     }
 
-    public function validateEmailField(ApiTester $I): void
+    /**
+     * @throws \Exception
+     */
+    #[Group('get', 'sanity')]
+    public function validateIdIsUniqueWithinCurrentApiResponse(ApiTester $I): void
     {
-        $I->seeResponseIsValidOnJsonSchemaString(json_encode(Schemas::GET_RESPONSE));
-    }
-
-    #[Group('local')]
-    public function validateActiveField(ApiTester $I): void
-    {
-        // codeception methods are magical
         $ids = $I->grabDataFromResponseByJsonPath('$.data[*].id');
-//        fwrite(STDOUT, "\n>>> \$ids: " . json_encode($ids) . "\n");
 
         $I->assertEquals(
             count($ids),

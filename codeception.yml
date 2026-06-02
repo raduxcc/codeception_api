@@ -4,7 +4,7 @@ support_namespace: Support
 
 paths:
     tests: tests
-    output: test_reports
+    output: tests/_output
     data: tests/Support/Data
     support: tests/Support
     envs: tests/Envs

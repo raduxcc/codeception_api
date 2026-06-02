@@ -24,7 +24,11 @@ class Schemas
                     'properties' => [
                         'id'  => ['type' => 'integer'],
                         'mbId' => ['type' => 'string'],
-                        'initials' => ['type' => 'string'],
+                        'initials' => [
+                            'type' => 'string',
+                            'minLength' => '2',
+                            'maxLength' => '2'
+                            ],
                         'name' => [
                             'type' => 'string',
                             'minLength' => 2,
@@ -32,14 +36,13 @@ class Schemas
                         ],
                         'email' => [
                             'type' => 'string',
-                            'pattern' => '^[^@\s]+@[^@\s]+\.[^@\s]+$'
-                            // "practical RFC-compliant pattern that doesn't include obsolete edge cases"
+                            'format' => 'email'
+//                            'pattern' => '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+                             # "practical RFC-compliant pattern that doesn't include obsolete edge cases" -- not working as expected
 //                            'pattern' => '^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'
                         ],
                         'slackUserId' => [
                             'type' => 'string',
-                            'minLength' => 1,
-                            'maxLength' => 33
                         ],
                         'active' => [
                             'type' => 'integer',
@@ -47,7 +50,7 @@ class Schemas
                         ]
                     ],
                     // mandatory keys
-                    'required' => ['id', 'name', 'email', 'active']
+                    'required' => ['id', 'mbId', 'initials', 'name', 'email', 'slackUserId', 'active']
                 ]
             ]
         ],

@@ -1,6 +1,6 @@
 {
-    "name": "codeception/fakestore-api-tests",
-    "description": "Codeception API tests for Fake Store API",
+    "name": "codeception/codeception-api-tests",
+    "description": "Codeception API tests for a mocked API",
     "type": "project",
     "require": {
         "php": "^8.2"
@@ -24,6 +24,6 @@
         "test:prod": "codecept run Api --env=prod --html",
         "test:dev": "codecept run Api --env=dev --html",
         "test:smoke": "codecept run Api --group=smoke --html",
-        "test:local": "codecept run Api --group=local --html"
+        "test:dev_debug": "codecept run Api --group=local --html --debug"
     }
 }

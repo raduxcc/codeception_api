@@ -1,5 +1,5 @@
 /vendor/
-/test_reports/
+/tests/_output
 /.env
 composer.phar
 composer-setup.php
