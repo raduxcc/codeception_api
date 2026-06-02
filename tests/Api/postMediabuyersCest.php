@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Api;
 
-use Codeception\Attribute\Group;
 use Codeception\Attribute\Examples;
+use Codeception\Attribute\Group;
 use Codeception\Example;
+use Support\Data\Schemas\Schemas;
 use Tests\Support\ApiTester;
 use Tests\Support\Data\Payloads;
-use Tests\Support\Data\Schemas;
 
 class postMediabuyersCest
 {
     private const apiEndpoint = '/api/mediabuyers';
     private const extendedDataEndpoint = '/api/mediabuyers/extended';
-    private const postPositiveSchema = 'tests/Support/Data/post-media-buyer-schema.json';
+    private const postPositiveSchema = 'Schemas/post-media-buyer-schema.json';
+
+//    private const expectedHeaders = 'application/json';
+    private const expectedHeaders = 'application/json; charset=utf-8';
 
     #[Group('post', 'positive')]
     #[Examples(removeKeys: [], type: 'Full valid payload')]
@@ -34,7 +37,7 @@ class postMediabuyersCest
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeHttpHeader('Content-Type', 'application/json');
+        $I->seeHttpHeader('Content-Type', self::expectedHeaders); #
         $I->seeResponseIsValidOnJsonSchema(codecept_root_dir(self::postPositiveSchema));
     }
 
@@ -42,14 +45,14 @@ class postMediabuyersCest
     #[Examples(delta: ['mbId' => null], errorMessage: 'This field is missing: mbID')] #required
     #[Examples(delta: ['mbId' => ''], errorMessage: 'Invalid field value: mbID')]
     #[Examples(delta: ['mbId' => ' '], errorMessage: 'Invalid field value: mbID')]
-    #[Examples(delta: ['mbId' => '42'], errorMessage: 'Record already exists')] # collision test
-    #[Examples(delta: ['mbId' => 'AAAAA'], errorMessage: 'Invalid field value: mbID')]
+    #[Examples(delta: ['mbId' => 'abc'], errorMessage: 'Invalid field value: mbID')]
 
     #[Examples(delta: ['initials' => ''], errorMessage: 'Invalid field value: initials')]
     #[Examples(delta: ['initials' => ' '], errorMessage: 'Invalid field value: initials')]
     #[Examples(delta: ['initials' => '99'], errorMessage: 'Invalid field value: initials')]
-    #[Examples(delta: ['initials' => 'A'], errorMessage: '"initials" should be 2 characters long.')]
-    #[Examples(delta: ['initials' => 'BBB'], errorMessage: '"initials" should be 2 characters long.')]
+    #[Examples(delta: ['initials' => 'A'], errorMessage: 'The initials must be exactly 2 characters long.')]
+    #[Examples(delta: ['initials' => 'BBB'], errorMessage: 'The initials must be exactly 2 characters long.')]
+    #[Examples(delta: ['initials' => 'TOO LONG'], errorMessage: 'The initials must be exactly 2 characters long.')]
 
     #[Examples(delta: ['name' => null], errorMessage: 'This field is missing: name')] #required
     #[Examples(delta: ['name' => ''], errorMessage: 'Invalid field value: name')]
@@ -92,12 +95,12 @@ class postMediabuyersCest
         $I->sendPost(self::apiEndpoint, $payload);
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
-        $I->seeHttpHeader('Content-Type', 'application/json');
+        $I->seeHttpHeader('Content-Type', self::expectedHeaders);
 
         $I->seeResponseContainsJson(Schemas::postValidationErrorPattern($data['errorMessage']));
     }
 
-    #[Group('post', 'negative', 'special')]
+    #[Group('post', 'negative')]
     #[Examples(removeKeys: ['mbId'], type: 'mbId not part of payload')]
     #[Examples(removeKeys: ['name'], type: 'name not part of payload')]
     #[Examples(removeKeys: ['email'], type: 'email not part of payload')]
@@ -116,11 +119,30 @@ class postMediabuyersCest
 
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
-        $I->seeHttpHeader('Content-Type', 'application/json');
-        $I->seeResponseIsValidOnJsonSchema(codecept_root_dir(self::postPositiveSchema));
+        $I->seeHttpHeader('Content-Type', self::expectedHeaders);
+        $I->seeResponseIsValidOnJsonSchema(codecept_data_dir(self::postPositiveSchema));
     }
 
-    #[Group('local', 'xxx')]
+    #[Group('post', 'sanity')]
+    public function testIdIsPositiveInteger(ApiTester $I): void
+    {
+        $payload = (new Payloads())->toArray();
+
+        $I->sendPost(self::apiEndpoint, $payload);
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+
+        $returnedId = $I->grabDataFromResponseByJsonPath('$.data.id')[0];
+
+        $I->assertTrue(
+            is_int($returnedId),
+            'Expected data.id to be an integer');
+        $I->assertGreaterThan(0,
+            $returnedId,
+            'Expected data.id to be a positive integer greater than 0');
+    }
+
+    #[Group('post', 'sanity', 'collision')]
     public function testUniquenessConstraintsAreEnforcedOnMBID(ApiTester $I): void
     {
         $I->sendGet(self::extendedDataEndpoint);
@@ -137,12 +159,12 @@ class postMediabuyersCest
         $I->sendPost(self::apiEndpoint, $payload);
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
-        $I->seeHttpHeader('Content-Type', 'application/json');
+        $I->seeHttpHeader('Content-Type', self::expectedHeaders);
         $I->seeResponseContainsJson(
             Schemas::postValidationErrorPattern('Record with mbId ' . $mbIdString . ' already exists.'));
     }
 
-    #[Group('local', 'xxx')]
+    #[Group('post', 'sanity', 'collision')]
     public function testUniquenessConstraintsAreEnforcedOnEmail(ApiTester $I): void
     {
         $I->sendGet(self::extendedDataEndpoint);
@@ -158,7 +180,7 @@ class postMediabuyersCest
         $I->sendPost(self::apiEndpoint, $payload);
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
-        $I->seeHttpHeader('Content-Type', 'application/json');
+        $I->seeHttpHeader('Content-Type', self::expectedHeaders);
 
         $I->seeResponseContainsJson(
             Schemas::postValidationErrorPattern('Record with email ' . $emailString . ' already exists.'));

@@ -6,30 +6,34 @@ namespace Tests\Api;
 
 use Codeception\Attribute\Group;
 use Tests\Support\ApiTester;
-use Tests\Support\Data\Schemas;
 
 class getMediabuyersCest
 {
-    private const lightDataEndpoint = '/api/mediabuyers';
-    private const extendedDataEndpoint = '/api/mediabuyers/extended';
+    private const lightDataEndpoint = '/api/mediabuyers'; #response contains 1 obj
+    private const extendedDataEndpoint = '/api/mediabuyers/extended'; #response contains 4 obj
+
+    private const getSchema = 'Schemas/get-media-buyers-schema.json';
+
+    # mockfly is weirdly vague about response headers, could not overwrite
+//    private const responseHeaderValue = 'application/json';
+    private const responseHeaderValue = 'application/json; charset=utf-8';
 
     public function _before(ApiTester $I): void
     {
         $I->sendGet(self::extendedDataEndpoint);
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        $I->seeHttpHeader('Content-Type', 'application/json');
-
-        $rawResponse = $I->grabResponse();
-        $prettyJson = json_encode(json_decode($rawResponse), JSON_PRETTY_PRINT);
-        // inject it into the HTML report steps
-        $I->comment("--- API RESPONSE BODY ---\n\n" . $prettyJson);
+        $I->seeHttpHeader('Content-Type', self::responseHeaderValue);
     }
 
-    #[Group('get', 'positive', 'sanity')]
+    #[Group('get', 'positive', 'sanity', 'yyy')]
     public function getRequestHappyPathForListOfMediaBuyers(ApiTester $I): void
     {
-        $I->seeResponseIsValidOnJsonSchemaString(json_encode(Schemas::GET_RESPONSE));
+        $I->seeResponseIsValidOnJsonSchema(codecept_data_dir(self::getSchema));
+//        $rawResponse = $I->grabResponse();
+//        $prettyJson = json_encode(json_decode($rawResponse), JSON_PRETTY_PRINT);
+//        // inject it into the HTML report steps
+//        $I->comment("--- API RESPONSE BODY ---\n\n" . $prettyJson);
     }
 
     #[Group('get', 'sanity')]
