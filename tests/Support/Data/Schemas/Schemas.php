@@ -1,6 +1,7 @@
 <?php
+//declare(strict_types=1);
 
-namespace Support\Data\Schemas;
+namespace tests\Support\Data\Schemas;
 
 class Schemas
 {

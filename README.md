@@ -1,7 +1,7 @@
 # Codeception API Automation Suite
 
-This repository contains the automated API testing suite for the Media Buyers mockup services, built using PHP and the **Codeception** framework. It features dynamic state factories, strict JSON schema validation, and multi-environment configuration mapping.
-
+Automated API testing suite for the Media Buyers mockup API (https://app.mockfly.dev/ + 6a1b64f18823bcd776a68e67), built using PHP and the **Codeception** framework. It features dynamic state factories, strict JSON schema validation, and multi-environment configuration mapping.
+The mockup responds to both GET and POST to the same endpoint, responding HTTP200 and HTTP400 based on a header. 
 ---
 
 ## Project Structure
@@ -15,10 +15,10 @@ codeception_api/
 │   ├── Api/                  # Actual API test files (Get/Post scenarios)
 │   │   ├── getMediabuyersCest.php
 │   │   └── postMediabuyersCest.php
-│   ├── Envs/                 # Environment-specific configurations (dev, prod, etc.)
+│   ├── Envs/                 # Environment-specific configurations (dev, prod)
 │   │   ├── dev.yml
 │   │   └── prod.yml
-│   └── Support/              # Test support layers, helpers, and data builders
+│   └── Support/              # Data builders
 │       ├── _generated/       # Auto-generated Codeception wrapper functions
 │       ├── Data/             # Test data assets
 │       │   ├── Schemas/      # Raw JSON schema files for contract validation
