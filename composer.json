@@ -6,6 +6,7 @@
         "php": "^8.2"
     },
     "require-dev": {
+        "allure-framework/allure-codeception": "^2.5",
         "codeception/codeception": "^5.0",
         "codeception/module-asserts": "^3.3",
         "codeception/module-phpbrowser": "^3.0",
@@ -19,11 +20,9 @@
         }
     },
     "scripts": {
-        "test:steps": "codecept run Api --steps --html report.html --xml report.xml",
-        "test": "codecept run Api --html",
-        "test:prod": "codecept run Api --env=prod --html",
-        "test:dev": "codecept run Api --env=dev --html",
-        "test:smoke": "codecept run Api --group=smoke --html",
-        "test:dev_debug": "codecept run Api --group=local --html --debug"
+        "test_everything": "codecept run Api",
+        "test:dev": "codecept run Api --env=dev --html --debug & start tests/_output/report.html",
+        "test:dev_sharding": "start /b codecept run Api --env dev --shard 1/3 & start /b codecept run Api --env dev --shard 2/3 & codecept run Api --env dev --shard 3/3 & allure serve tests/_output/allure-results",
+        "test:prod_sanity": "codecept run Api --env=prod -g sanity --html --debug & start tests/_output/report.html"
     }
 }

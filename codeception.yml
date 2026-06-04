@@ -11,11 +11,13 @@ paths:
 
 settings:
     colors: true
-#    formats: # forcing test report at every run
-#        html: true
 
 actor_suffix: Tester
 
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
+        - Qameta\Allure\Codeception\AllureCodeception
+    config:
+        Qameta\Allure\Codeception\AllureCodeception:
+            outputDirectory: allure-results

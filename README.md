@@ -28,57 +28,69 @@ codeception_api/
 └── codeception.yml           # Global framework project configurations
 ```
 
-Getting Started
-
-Prerequisites
+### Prerequisites
 ```
     PHP 8.1+
 
     Composer installed globally
 ```
-Installation
+### Installation
 
 Clone the repository and navigate into the project root directory.
 
-Install the required vendor packages:
+1. Install the required vendor packages:
 ```Bash
 composer install
 ```
-Validate your composer setup configuration:
+2. Validate your composer setup configuration:
 ```Bash
 composer validate
 ```
-
-Build the Codeception actor classes to register custom helper actions:
+3. Build the Codeception actor classes to register custom helper actions:
 ```Bash
 vendor/bin/codecept build
 ```
-Executing the Test Suite
 
-Run using codecept
+## Executing the Test Suite
+
+- Run command variations
 ```Bash
 vendor/bin/codecept run Api --env dev -g sanity --html --debug
-```
-Run using php
-```Bash
 php vendor/bin/codecept run Api --env dev -g sanity --html --debug
+composer test_everything # composer.json script
 ```
-Run options
+
+- Core CLI Options
 ```Bash
 --env dev                  # target environment
--g sanity / --group sanity # execution Groups (/annotations /suites)
---html                     # generate HTML report available at tests/_output/report.html
+-g sanity / --group sanity # execution Groups (/annotations /suites). Can be chained (-g sanity -g get), in which case the test runner treats it as an OR operation 
+-x /--skip-group           # skips(filters) a group. Can also be chained, e.g. (-g sanity -x collision)
+--html                     # generate native HTML report available at tests/_output/report.html
+--xml                      # xml report
+-g failed                  # rerunning only failed tests
 --debug                    # console debug 
 ```
 
-Other mentionable run options
-```Bash
---shard 1/3 # shard 1 out of 3 - Codecept splits the number of tests to run in 3. Two more similar commands are needed to be run in the same time in order to achieve what --shard is supposed to achieve (... --shard 2/3 and ... --shard 3/3) .
---xml       # xml report
--g failed   # rerunning only failed tests
-```
-
-Wipe old execution report histories and lingering failure logs:
+Wipe old execution report histories and lingering failure logs
 ```Bash
 vendor/bin/codecept clean
+```
+
+## Parallel option usage
+
+Parallel running using the '--shard' option which divides the total test volume into parallel chunks for concurrent processing pipelines. 
+Expects fraction notation (e.g. --shard 1/3 runs the first third of your suite on that particular runner instance).
+In order to generate a unified test report, Allure can be used as it offers a gorgeous dashboard.
+I've included a 1 line script in composer.json ("test:dev_sharding") that works in Win11
+
+```Bash
+"test:dev_sharding": "start /b codecept run Api --env dev --shard 1/3 & start /b codecept run Api --env dev --shard 2/3 & codecept run Api --env dev --shard 3/3 & allure serve tests/_output/allure-results",
+```
+Script breakdown
+```
+- "start /b"                                  // start independent background process
+- "codecept run Api --env dev --shard 1/3"    // run the first chunk of tests
+- "codecept run Api --env dev --shard 2/3"    // run the second chunk of tests
+- "codecept run Api --env dev --shard 3/3"    // run the third chunk of tests
+- "allure serve tests/_output/allure-results" // Allure compiles the unified test report and opens up a local web server to serve it
 ```
